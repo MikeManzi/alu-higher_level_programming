@@ -1,19 +1,13 @@
 #!/usr/bin/python3
 """
-Python script that takes in a URL, sends a request to the URL and displays the 
-value of the variable X-Request-Id in the response header
+Python script that takes in a URL, sends a request to the URL and
+displays the value of the variable X-Request-Id
 """
 import requests
-from sys import argv
+import sys
 
+if __name__ == '__main__':
 
-if __name__ == "__main__":
-    """Takes in a URL, sends a request to the URL and displays
-    the value of the X-Request-Id variable found in the header
-    of the response using requests"""
-    r = requests.get(argv[1])
-    try:
-        r_id = r.headers['X-Request-Id']
-        print(r_id)
-    except:
-        pass
+    res = requests.get(sys.argv[1])
+    head = res.headers.get('X-Request-Id')
+    print(head)
