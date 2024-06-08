@@ -1,7 +1,7 @@
 #!/usr/bin/node
 const request = require('request');
 
-function printCharactersInMovie (movieId) {
+function printCharactersInMovie(movieId) {
   const apiUrl = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
 
   request.get(apiUrl, (error, response, body) => {
@@ -17,10 +17,9 @@ function printCharactersInMovie (movieId) {
 
     const movie = JSON.parse(body);
     const characterUrls = movie.characters;
-    const characters = [];
 
-    // Fetch all character details
-    Promise.all(characterUrls.map(characterUrl => {
+    // Create an array of promises for fetching character details
+    const characterPromises = characterUrls.map(characterUrl => {
       return new Promise((resolve, reject) => {
         request.get(characterUrl, (error, response, body) => {
           if (error) {
@@ -34,16 +33,20 @@ function printCharactersInMovie (movieId) {
           }
 
           const character = JSON.parse(body);
-          characters.push(character.name);
-          resolve();
+          resolve(character.name);
         });
       });
-    })).then(() => {
-      // Print characters in the order they appear in the film
-      characters.forEach(character => console.log(character));
-    }).catch(error => {
-      console.error(error);
     });
+
+    // Use Promise.all to wait for all promises to resolve
+    Promise.all(characterPromises)
+      .then(characters => {
+        // Print characters in the order they appear in the film
+        characters.forEach(character => console.log(character));
+      })
+      .catch(error => {
+        console.error(error);
+      });
   });
 }
 
